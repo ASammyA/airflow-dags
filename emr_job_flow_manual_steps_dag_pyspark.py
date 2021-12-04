@@ -31,6 +31,7 @@ from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.contrib.operators.emr_create_job_flow_operator import EmrCreateJobFlowOperator
 from airflow.contrib.sensors.emr_job_flow_sensor import EmrJobFlowSensor
+import boto3
 
 # import sys
 # sys.path.append("/usr/local/airflow/plugins")
@@ -75,10 +76,10 @@ SPARK_STEPS = [
 
 # /usr/bin/spark-submit --master yarn --deploy-mode cluster --num-executors 2 --driver-memory 512m --executor-memory 3g --executor-cores 2 --py-files s3://sammy-midterm-code/job.zip s3://sammy-midterm-code/workflow_entry.py -p "{'input_path':'s3://sammy-de-midterm/banking.csv','name':'demo', 'file_type':'txt', 'output_path':'s3://sammy-midterm-output', 'partition_column': 'job'}"
 
-JOB_FLOW_OVERRIDES = {
-    'Name': 'Sammy_DE_Midterm_EMR_Cluster',
-    'ReleaseLabel': 'emr-6.4.0',
-    'Applications': [
+def create_cluster() : (
+    Name='Sammy_DE_Midterm_EMR_Cluster',
+    ReleaseLabel='emr-6.4.0',
+    Applications=[
         {
             'Name': 'Hadoop'
         },
@@ -89,7 +90,7 @@ JOB_FLOW_OVERRIDES = {
             'Name': 'Spark'
         }
     ],
-    'Instances': {
+    Instances={
         "Ec2KeyName": "Sammy_DE_Midterm",
         "InstanceGroups": [
             {
@@ -110,8 +111,8 @@ JOB_FLOW_OVERRIDES = {
         'KeepJobFlowAliveWhenNoSteps': False,
         'TerminationProtected': False,
     },
-    'LogUri': 's3://sammy-midterm-emr-logs',
-    "Configurations": [
+    LogUri='s3://sammy-midterm-emr-logs',
+    Configurations=[
         {
             "Classification":"hive-site", 
             "Properties":{
@@ -127,8 +128,8 @@ JOB_FLOW_OVERRIDES = {
             "Configurations":[]
         }
     ],
-    'Steps': SPARK_STEPS,
-}            
+    Steps=SPARK_STEPS,
+)            
 
 dag = DAG(
     'emr_job_flow_manual_steps_dag_pyspark',
@@ -144,11 +145,10 @@ parse_request = PythonOperator(
         dag=dag
     )
 
-job_flow_creator = EmrCreateJobFlowOperator(
+job_flow_creator = PythonOperator(
         task_id='create_job_flow',
-        job_flow_overrides=JOB_FLOW_OVERRIDES,
-        aws_conn_id='aws_default',
-        emr_conn_id='emr_default',
+        provide_context=True,
+        python_callable=create_cluster,
         dag=dag
     )
 
