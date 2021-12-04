@@ -40,7 +40,7 @@ DEFAULT_ARGS = {
     'email_on_retry': False
 }
 
-CLUSTER_ID = 'j-3BCJA64MODRWP'
+CLUSTER_ID = 'j-2VIGWLCMD9WI1'
 
 def retrieve_s3_file(**kwargs):
     s3_location = kwargs['dag_run'].conf['s3_location'] 
@@ -54,23 +54,15 @@ SPARK_TEST_STEPS = [
             'Jar': 'command-runner.jar',
             'Args': [
                 '/usr/bin/spark-submit', 
-                '--class', 'Driver.MainApp',
                 '--master', 'yarn',
                 '--deploy-mode','cluster',
                 '--num-executors','2',
                 '--driver-memory','512m',
                 '--executor-memory','3g',
                 '--executor-cores','2',
-                's3://demo-wcd/wcd_final_project_2.11-0.1.jar',
-                '-p','wcd-demo',
-                '-i','Csv',
-                '-o','parquet',
-                #'-s','s3a://demo-wcd/banking.csv',
-                '-s', "{{ task_instance.xcom_pull('parse_request', key='s3location') }}",
-                '-d','s3://demo-wcd/',
-                '-c','job',
-                '-m','append',
-                '--input-options','header=true'
+                '--py-files', 's3://sammy-midterm-code/job.zip',
+                's3://sammy-midterm-code/workflow_entry.py',
+                '-p', "{'input_path':'{{ task_instance.xcom_pull('parse_request', key='s3location') }}','name':'demo', 'file_type':'txt', 'output_path':'s3://sammy-midterm-output/output/', 'partition_column': 'job'}"
             ]
         }
     }
@@ -81,7 +73,7 @@ dag = DAG(
     'emr_job_flow_manual_steps_dag',
     default_args=DEFAULT_ARGS,
     dagrun_timeout=timedelta(hours=2),
-    schedule_interval='0 3 * * *'
+    schedule_interval=None
 )
 
 
