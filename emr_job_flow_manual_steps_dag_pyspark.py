@@ -76,7 +76,8 @@ SPARK_STEPS = [
 
 # /usr/bin/spark-submit --master yarn --deploy-mode cluster --num-executors 2 --driver-memory 512m --executor-memory 3g --executor-cores 2 --py-files s3://sammy-midterm-code/job.zip s3://sammy-midterm-code/workflow_entry.py -p "{'input_path':'s3://sammy-de-midterm/banking.csv','name':'demo', 'file_type':'txt', 'output_path':'s3://sammy-midterm-output', 'partition_column': 'job'}"
 
-def create_cluster() : client.run_job_flow(
+emr=boto3.client('emr','us-east-1')
+def create_cluster() : emr.run_job_flow(
     Name='Sammy_DE_Midterm_EMR_Cluster',
     ReleaseLabel='emr-6.4.0',
     Applications=[
