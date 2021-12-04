@@ -100,7 +100,7 @@ JOB_FLOW_OVERRIDES = {
                 'InstanceCount': 1
             },
             {
-                'Name': 'Primary node',
+                'Name': 'Worker node',
                 'Market': 'SPOT',
                 'InstanceRole': 'CORE',
                 'InstanceType': 'm5.xlarge',
