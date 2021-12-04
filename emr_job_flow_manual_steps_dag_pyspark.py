@@ -117,15 +117,13 @@ def create_cluster() : client.run_job_flow(
             "Classification":"hive-site", 
             "Properties":{
                 "hive.metastore.client.factory.class":"com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory"
-            },
-            "Configurations":[]
+            }
         },
         {
             "Classification":"spark-hive-site", 
             "Properties":{
                 "hive.metastore.client.factory.class":"com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory"
-            },
-            "Configurations":[]
+            }
         }
     ],
     Steps=SPARK_STEPS,
