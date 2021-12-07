@@ -13,7 +13,7 @@ DEFAULT_ARGS = {
 }
 
 dag = DAG(
-    'emr_job_flow_manual_steps_dag_pyspark',
+    'create_emr_bash',
     default_args=DEFAULT_ARGS,
     dagrun_timeout=timedelta(hours=2),
     schedule_interval=None
