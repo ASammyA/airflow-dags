@@ -1,4 +1,4 @@
-from airflow.models.BaseOperator import BashOperator
+from airflow.operators.bash_operator import BashOperator
 
 DEFAULT_ARGS = {
     'owner': 'airflow',
