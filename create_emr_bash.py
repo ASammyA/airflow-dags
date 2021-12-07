@@ -1,3 +1,4 @@
+import airflow
 from airflow.operators.bash_operator import BashOperator
 
 DEFAULT_ARGS = {
