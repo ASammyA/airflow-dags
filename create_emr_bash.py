@@ -1,5 +1,6 @@
 import airflow
 from airflow import DAG
+from datetime import timedelta
 from airflow.operators.bash_operator import BashOperator
 
 DEFAULT_ARGS = {
