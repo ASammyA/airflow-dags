@@ -22,7 +22,7 @@ dag = DAG(
 create_emr_bash = BashOperator(
     task_id='create_emr_bash',
     dag=dag,
-    bash_command="/opt/airflow/aws_cli_create_emr.sh"
+    bash_command="s3://sammy-midterm-code/aws_cli_create_emr.sh"
 )
 
 create_emr_bash
